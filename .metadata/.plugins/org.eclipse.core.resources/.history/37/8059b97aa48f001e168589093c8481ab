@@ -1,0 +1,37 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Ex3 {
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Menu Example");
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Options");
+        JMenuItem item1 = new JMenuItem("Item 1");
+        JMenuItem item2 = new JMenuItem("Item 2");
+
+        item1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Item 1 selected");
+            }
+        });
+
+        item2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Item 2 selected");
+            }
+        });
+
+        menu.add(item1);
+        menu.add(item2);
+        menuBar.add(menu);
+
+        frame.setJMenuBar(menuBar);
+        frame.setSize(300, 200);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}

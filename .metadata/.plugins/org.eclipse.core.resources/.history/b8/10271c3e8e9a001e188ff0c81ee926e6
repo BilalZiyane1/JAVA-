@@ -1,0 +1,100 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+
+public class FilmChaineGUI extends JFrame {
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private JButton ajouterButton, modifierButton, supprimerButton;
+    private Connection connection;
+    private PreparedStatement preparedStatement;
+    private ResultSet resultSet;
+
+    public FilmChaineGUI() {
+        setTitle("Film & Chaine Table");
+        setSize(800, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null); // Use null layout
+
+        tableModel = new DefaultTableModel();
+        table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(10, 10, 600, 300); // Set bounds for JScrollPane
+
+        ajouterButton = new JButton("Ajouter");
+        modifierButton = new JButton("Modifier");
+        supprimerButton = new JButton("Supprimer");
+        ajouterButton.setBounds(10, 320, 90, 30); // Set bounds for Ajouter button
+        modifierButton.setBounds(110, 320, 90, 30); // Set bounds for Modifier button
+        supprimerButton.setBounds(210, 320, 90, 30); // Set bounds for Supprimer button
+
+        add(scrollPane);
+        add(ajouterButton);
+        add(modifierButton);
+        add(supprimerButton);
+
+        ajouterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openAddRecordWindow();
+            }
+        });
+
+        // Other actionPerformed methods remain the same
+
+        connectToDB();
+        loadTableData();
+    }
+
+    // Other methods remain the same...
+
+    private void openAddRecordWindow() {
+        JFrame addRecordFrame = new JFrame("Add Record");
+        addRecordFrame.setSize(300, 200);
+        addRecordFrame.setLayout(null); // Use null layout for the new window
+
+        JLabel labelNum = new JLabel("Num:");
+        JLabel labelTitre = new JLabel("Titre:");
+        JLabel labelLangue = new JLabel("Langue:");
+
+        JTextField fieldNum = new JTextField();
+        JTextField fieldTitre = new JTextField();
+        JTextField fieldLangue = new JTextField();
+
+        JButton okButton = new JButton("OK");
+
+        labelNum.setBounds(10, 10, 60, 20);
+        labelTitre.setBounds(10, 40, 60, 20);
+        labelLangue.setBounds(10, 70, 60, 20);
+        fieldNum.setBounds(80, 10, 120, 20);
+        fieldTitre.setBounds(80, 40, 120, 20);
+        fieldLangue.setBounds(80, 70, 120, 20);
+        okButton.setBounds(100, 120, 80, 30);
+
+        addRecordFrame.add(labelNum);
+        addRecordFrame.add(labelTitre);
+        addRecordFrame.add(labelLangue);
+        addRecordFrame.add(fieldNum);
+        addRecordFrame.add(fieldTitre);
+        addRecordFrame.add(fieldLangue);
+        addRecordFrame.add(okButton);
+
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Insertion logic remains the same
+            }
+        });
+
+        addRecordFrame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new FilmChaineGUI().setVisible(true);
+            }
+        });
+    }
+}

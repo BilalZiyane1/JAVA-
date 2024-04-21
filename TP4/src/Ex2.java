@@ -1,0 +1,45 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Ex2 {
+    private JLabel label;
+    private int clickCount; 
+
+    public Ex2() {
+        JFrame frame = new JFrame("exemple");
+        JButton plusButton = new JButton("Plus");
+        JButton moinsButton = new JButton("Moins");
+        
+        plusButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clickCount++;
+                updateLabel();
+            }
+        });
+        moinsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clickCount--;
+                updateLabel();
+            }
+        });
+        label = new JLabel("0", SwingConstants.CENTER); 
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1)); 
+        buttonPanel.add(plusButton);
+        buttonPanel.add(moinsButton);
+        JPanel labelPanel = new JPanel(new BorderLayout()); 
+        labelPanel.add(label, BorderLayout.CENTER);
+        frame.setLayout(new GridLayout(1, 2)); 
+        frame.add(buttonPanel); 
+        frame.add(labelPanel); 
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+    private void updateLabel() {
+        label.setText(Integer.toString(clickCount));
+    }
+    public static void main(String[] args) {
+        new Ex2();
+    }
+}

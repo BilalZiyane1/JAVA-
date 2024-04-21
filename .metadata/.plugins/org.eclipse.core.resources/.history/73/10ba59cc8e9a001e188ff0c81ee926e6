@@ -1,0 +1,152 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+
+public class FilmChaineGUI extends JFrame {
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private JButton ajouterButton, modifierButton, supprimerButton;
+    private Connection connection;
+    private PreparedStatement preparedStatement;
+    private ResultSet resultSet;
+
+    public FilmChaineGUI() {
+        setTitle("Film & Chaine Table");
+        setSize(800, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null); // Use null layout
+
+        tableModel = new DefaultTableModel();
+        table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(10, 10, 600, 300); // Set bounds for JScrollPane
+
+        ajouterButton = new JButton("Ajouter");
+        modifierButton = new JButton("Modifier");
+        supprimerButton = new JButton("Supprimer");
+        ajouterButton.setBounds(10, 320, 90, 30); // Set bounds for Ajouter button
+        modifierButton.setBounds(110, 320, 90, 30); // Set bounds for Modifier button
+        supprimerButton.setBounds(210, 320, 90, 30); // Set bounds for Supprimer button
+
+        add(scrollPane);
+        add(ajouterButton);
+        add(modifierButton);
+        add(supprimerButton);
+
+        ajouterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openAddRecordWindow();
+            }
+        });
+
+        connectToDB();
+        loadTableData();
+    }
+
+    public void connectToDB() {
+        try {
+            String url = "jdbc:mysql://localhost:3306/tp6";
+            String username = "root";
+            String password = "200405";
+
+            connection = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected to the database!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadTableData() {
+        try {
+            String sql = "SELECT film.Num, film.titre, film.langue, chaine.Code, chaine.nom, chaine.pays " +
+                         "FROM film LEFT JOIN diffuser ON film.Num = diffuser.film_Num " +
+                         "LEFT JOIN chaine ON diffuser.chaine_Code = chaine.Code";
+
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            for (int i = 1; i <= columnCount; i++) {
+                tableModel.addColumn(metaData.getColumnName(i));
+            }
+
+            while (resultSet.next()) {
+                Object[] row = new Object[columnCount];
+                for (int i = 0; i < columnCount; i++) {
+                    row[i] = resultSet.getObject(i + 1);
+                }
+                tableModel.addRow(row);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void openAddRecordWindow() {
+        final JFrame addRecordFrame = new JFrame("Add Record");
+        addRecordFrame.setSize(300, 200);
+        addRecordFrame.setLayout(null); // Use null layout for the new window
+
+        JLabel labelNum = new JLabel("Num:");
+        JLabel labelTitre = new JLabel("Titre:");
+        JLabel labelLangue = new JLabel("Langue:");
+
+        final JTextField fieldNum = new JTextField();
+        final JTextField fieldTitre = new JTextField();
+        final JTextField fieldLangue = new JTextField();
+
+        JButton okButton = new JButton("OK");
+
+        labelNum.setBounds(10, 10, 60, 20);
+        labelTitre.setBounds(10, 40, 60, 20);
+        labelLangue.setBounds(10, 70, 60, 20);
+        fieldNum.setBounds(80, 10, 120, 20);
+        fieldTitre.setBounds(80, 40, 120, 20);
+        fieldLangue.setBounds(80, 70, 120, 20);
+        okButton.setBounds(100, 120, 80, 30);
+
+        addRecordFrame.add(labelNum);
+        addRecordFrame.add(labelTitre);
+        addRecordFrame.add(labelLangue);
+        addRecordFrame.add(fieldNum);
+        addRecordFrame.add(fieldTitre);
+        addRecordFrame.add(fieldLangue);
+        addRecordFrame.add(okButton);
+
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String sql = "INSERT INTO film (Num, titre, langue) VALUES (?, ?, ?)";
+                    preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setInt(1, Integer.parseInt(fieldNum.getText()));
+                    preparedStatement.setString(2, fieldTitre.getText());
+                    preparedStatement.setString(3, fieldLangue.getText());
+                    preparedStatement.executeUpdate();
+
+                    tableModel.setRowCount(0); // Clear previous data
+                    loadTableData();
+                    addRecordFrame.dispose(); // Close the add record window
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(addRecordFrame, "Please enter a valid number for Num.");
+                }
+            }
+        });
+
+        addRecordFrame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new FilmChaineGUI().setVisible(true);
+            }
+        });
+    }
+}

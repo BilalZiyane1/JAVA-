@@ -1,0 +1,53 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Ex2 {
+    private JLabel label;
+    private int clickCount; 
+
+    public Ex2() {
+        JFrame frame = new JFrame("exemple");
+        JButton plusButton = new JButton("Plus");
+        JButton moinsButton = new JButton("Moins");
+        
+        plusButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clickCount++;
+                updateLabel();
+            }
+        });
+
+        moinsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clickCount--;
+                updateLabel();
+            }
+        });
+
+        label = new JLabel("0", SwingConstants.CENTER); // Centrer le texte dans le JLabel
+
+        JPanel buttonPane = new JPanel(new GridLayout(1, 2)); // GridLayout pour les boutons
+        buttonPane.add(plusButton);
+        buttonPane.add(moinsButton);
+
+        JPanel labelPane = new JPanel(new BorderLayout()); // BorderLayout pour le label
+        labelPane.add(label, BorderLayout.CENTER);
+
+        frame.setLayout(new BorderLayout());
+        frame.add(buttonPane, BorderLayout.NORTH);
+        frame.add(labelPane, BorderLayout.CENTER);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    private void updateLabel() {
+        label.setText(Integer.toString(clickCount));
+    }
+
+    public static void main(String[] args) {
+        new Ex2();
+    }
+}

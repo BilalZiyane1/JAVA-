@@ -1,0 +1,35 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Ex1 {
+    private JLabel label;
+    private int clickCount; // Variable pour compter les clics
+
+    public Ex1() {
+        JFrame frame = new JFrame("exemple");
+        JButton button = new JButton("clic clic");
+        button.addActionListener(new MyActionListener());
+        label = new JLabel("0");
+        JPanel pane = new JPanel();
+        pane.add(button);
+        pane.add(label);
+        frame.getContentPane().add(pane, BorderLayout.CENTER);
+        frame.pack(); // Ajuster la taille du cadre
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Terminer le programme lorsque la fenêtre est fermée
+        frame.setVisible(true); // Rendre la fenêtre visible
+    }
+
+    private class MyActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            // Incrémenter le nombre d'appuis sur le bouton
+            clickCount++;
+            // Mettre à jour le texte du label avec le nombre actuel d'appuis
+            label.setText(Integer.toString(clickCount));
+        }
+    }
+
+    public static void main(String[] args) {
+        new Ex1();
+    }
+}
